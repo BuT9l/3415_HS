@@ -1,6 +1,5 @@
 from src.gamestate import GameState
 from src.hand import Hand
-from src.field import Field, FieldNames
 from src.stack import Stack
 import enum
 import random

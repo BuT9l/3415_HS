@@ -16,8 +16,8 @@ class GameState:
             i_from - index on the field of the attacker card
             i_to - index on the field of the defending card
         """
-        attacker_card = self.attacker.field[i_from]
-        defender_card = self.defender.field[i_to]
+        attacker_card = self.attacker.field.get(i_from)
+        defender_card = self.defender.field.get(i_to)
         if type(attacker_card) is not Unit or type(defender_card) is not Unit:
             return
 
@@ -28,7 +28,8 @@ class GameState:
         for item in defender_card.items:
             new_card = deepcopy(item)
             self.defender.stack.push(new_card)
-        self.defender.field[i_to] = None
+
+        self.defender.field.erase(i_to)
         new_card = deepcopy(DECK[defender_card.id])
         self.defender.stack.push(new_card)
 

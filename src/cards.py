@@ -57,7 +57,7 @@ class Unit(Card):
         Card.__init__(self, id=id, name=name, fract=fract, mn=mn)
         self.dmg = dmg
         self.hp = hp
-        self.items = items
+        self.items = items if items is not None else list()
 
     @classmethod
     def load(cls, file):
@@ -68,7 +68,9 @@ class Unit(Card):
             mn=file["mn"],
             dmg=file["dmg"],
             hp=file["hp"],
-            items=file["items"],
+            items=file.get(
+                "items"
+            ),  # get() will return None if items does not exist, and they does not in plain cards from repo
         )
 
     def can_recieve_item(self, item):
@@ -140,7 +142,7 @@ class PlayerUnit(Unit):
 
 
 def load_card_from_file(file: Path):
-    card_dict = json.load(file)
+    card_dict = json.load(open(file))
     card_dict["id"] = file.stem
     lookup_table = {
         "unit": Unit.load,
@@ -156,9 +158,9 @@ def load_cards(cards_path: Path):
     cards_list = listdir(cards_path)
     deck = dict()
 
-    for card_file in map(cards_list, Path):
+    for card_file in map(Path, cards_list):
         full_path = cards_path / card_file
-        if card_file.suffix() != ".json" or not isfile(full_path):
+        if card_file.suffix != ".json" or not isfile(full_path):
             continue
 
         card = load_card_from_file(full_path)

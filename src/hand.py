@@ -6,5 +6,5 @@ from src.resource import RESOURCE
 class Hand(IterableStaticSize):
     def __init__(self, cards_list: list | None = None):
         self.cards_list = (
-            cards_list if cards_list != None else [None] * RESOURCE.hand_size
+            cards_list if cards_list != None else [None] * RESOURCE["hand_size"]
         )
