@@ -15,7 +15,7 @@ class IPlayerInput(ABC):
 
     # CURRENT_TURN_MAIN
     @abstractmethod
-    def choose_current_turn(self):# -> GamePhase: circular import
+    def choose_current_turn(self):  # -> GamePhase: circular import
         """
         Выбрать, какое действие вы хотите сделать за ход. (Какая фаза будет следующей)
         Можно:

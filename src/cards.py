@@ -3,6 +3,7 @@ from pathlib import Path
 from os import listdir
 from os.path import isfile
 
+
 class Card:
 
     def __init__(self, id, name, fract, mn):
@@ -84,6 +85,7 @@ class Unit(Card):
     def is_dead(self):
         return self.hp < 0
 
+
 class Location(Card):
     def __init__(self, id, name, fract, mn, dmg_boost, hp_boost):
         Card.__init__(self, id=id, name=name, fract=fract, mn=mn)
@@ -136,6 +138,7 @@ class PlayerUnit(Unit):
             items=file["items"],
         )
 
+
 def load_card_from_file(file: Path):
     card_dict = json.load(file)
     card_dict["id"] = file.stem
@@ -148,15 +151,16 @@ def load_card_from_file(file: Path):
     card = lookup_table[card_dict["class"]](card_dict)
     return card
 
+
 def load_cards(cards_path: Path):
     cards_list = listdir(cards_path)
     deck = dict()
 
     for card_file in map(cards_list, Path):
-        full_path = cards_path/card_file
-        if card_file.suffix() != '.json' or not isfile(full_path):
+        full_path = cards_path / card_file
+        if card_file.suffix() != ".json" or not isfile(full_path):
             continue
-        
+
         card = load_card_from_file(full_path)
         deck[card.id] = card
     return deck

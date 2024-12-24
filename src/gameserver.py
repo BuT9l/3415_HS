@@ -20,20 +20,19 @@ class GameServer:
         self.game_state = state if state is not None else GameState()
         self.current_phase = phase if phase is not None else GamePhase.CREATE_DECK
 
-    phases = {
-        GamePhase.CREATE_DECK: create_deck_phase,
-        GamePhase.CURRENT_TURN_MAIN: current_turn_main_phase,
-        GamePhase.CURRENT_TURN_PLAY_CARD: current_turn_play_card_phase,
-        GamePhase.CURRENT_TURN_ATTACK: current_turn_attack_phase,
-        GamePhase.SWAP_PLAYERS: swap_players_phase,
-        GamePhase.GAME_END: end_game,
-    }
-
     def run(self):
         while self.current_phase != GamePhase.GAME_END:
             self.run_one_step()
 
     def run_one_step(self):
+        phases = {
+            GamePhase.CREATE_DECK: create_deck_phase,
+            GamePhase.CURRENT_TURN_MAIN: current_turn_main_phase,
+            GamePhase.CURRENT_TURN_PLAY_CARD: current_turn_play_card_phase,
+            GamePhase.CURRENT_TURN_ATTACK: current_turn_attack_phase,
+            GamePhase.SWAP_PLAYERS: swap_players_phase,
+            GamePhase.GAME_END: end_game,
+        }
         phases[self.current_phase]()
 
     def create_deck_phase(self):
@@ -54,7 +53,6 @@ class GameServer:
 
     def swap_players_phase(self):
         self.game_state.attacker.input_interface.turn_end()
-        self.game_state.swap_players()
         self.current_phase = GamePhase.CURRENT_TURN_MAIN
 
     def end_game():

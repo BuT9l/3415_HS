@@ -1,4 +1,5 @@
 from enum import IntEnum
+from src.iterable import IterableStaticSize
 
 
 class FieldNames(IntEnum):
@@ -10,14 +11,8 @@ class FieldNames(IntEnum):
     LOCATION = 5
 
 
-class Field:
+class Field(IterableStaticSize):
     def __init__(self, cards_list: list | None = None):
-        cards_list = cards_list if cards_list != None else [None] * len(FieldNames)
-
-    def __eq__(self, other):
-        for i in range(len(self.cards_list)):
-            if self.cards_list[i] != other.cards_list[i]:
-                return False
-        return True
-
-
+        self.cards_list = (
+            cards_list if cards_list is not None else [None] * len(FieldNames)
+        )

@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from src.player import Player
 from src.resource import RESOURCE
-from src.field import Field
+from src.field import FieldNames
 
 
 class GameState:
@@ -22,10 +22,15 @@ class GameState:
             return
 
         attacker_card.attack(defender_card)
-        if defender_card.is_dead():
-            self.defender.field[i_to] = None
-            new_card = deepcopy(DECK[defender_card.id])
+        if not defender_card.is_dead():
+            return
+
+        for item in defender_card.items:
+            new_card = deepcopy(item)
             self.defender.stack.push(new_card)
+        self.defender.field[i_to] = None
+        new_card = deepcopy(DECK[defender_card.id])
+        self.defender.stack.push(new_card)
 
     def play_card(self, i_from, i_to):
         if self.attacker.can_play_card(i_from, i_to):
@@ -34,6 +39,6 @@ class GameState:
     def swap_players(self):
         self.attacker, self.defender = self.defender, self.attacker
 
-    def next_turn(self, is_skipped):
-        self.defender.change_mana(Field.PLAYER, RESOURCE['mana_add_per_turn'])
+    def turn_end(self):
+        self.defender.change_mana(FieldNames.PLAYER, RESOURCE["mana_add_per_turn"])
         self.swap_players()

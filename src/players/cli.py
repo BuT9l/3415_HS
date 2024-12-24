@@ -6,7 +6,7 @@ class CLI(IPlayerInput):
     def choose_cards(self, all_cards: dict):
         pass
 
-    def choose_current_turn(self) -> GamePhase:
+    def choose_current_turn(self):  # -> GamePhase:
         match int(
             input(
                 """
