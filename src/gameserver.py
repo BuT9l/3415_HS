@@ -34,7 +34,6 @@ class GameServer:
             self.run_one_step()
 
     def run_one_step(self):
-        # print(self.current_phase) #для проверки
         phases[self.current_phase]()
 
     def create_deck_phase(self):

@@ -1,5 +1,7 @@
 import json
-
+from pathlib import Path
+from os import listdir
+from os.path import isfile
 
 class Card:
 
@@ -76,15 +78,11 @@ class Unit(Card):
         self.hp += item.hp_boost
         self.dmg += item.dmg_boost
 
-    def change_dmg(self, d_dmg):
-        self.dmg += d_dmg
+    def attack(self, other):
+        other.hp -= self.dmg
 
-    def change_hp(self, d_hp):
-        self.hp += d_hp
-
-    def change_mp(self, d_mn):
-        self.mn += d_mn
-
+    def is_dead(self):
+        return self.hp < 0
 
 class Location(Card):
     def __init__(self, id, name, fract, mn, dmg_boost, hp_boost):
@@ -138,25 +136,27 @@ class PlayerUnit(Unit):
             items=file["items"],
         )
 
+def load_card_from_file(file: Path):
+    card_dict = json.load(file)
+    card_dict["id"] = file.stem
+    lookup_table = {
+        "unit": Unit.load,
+        "item": Item.load,
+        "location": Location.load,
+        "event": Event.load,
+    }
+    card = lookup_table[card_dict["class"]](card_dict)
+    return card
 
-@staticmethod
-def load_cards(cards_repo):
-    cards_list = open(cards_repo + "cards_list.txt").readlines()
-    cards = dict()
+def load_cards(cards_path: Path):
+    cards_list = listdir(cards_path)
+    deck = dict()
 
-    for i in range(len(cards_list)):
-        cards_list[i] = cards_list[i].replace("\n", "")
-        f = json.load(open(cards_repo + cards_list[i] + ".json", encoding="utf8"))
-        f["id"] = cards_list[i]
-
-        lookup_table = {
-            "unit": Unit.load,
-            "item": Item.load,
-            "location": Location.load,
-            "event": Event.load,
-        }
-
-        card = lookup_table[f["class"]](f)
-        cards[cards_list[i]] = card
-
-    return cards, cards_list
+    for card_file in map(cards_list, Path):
+        full_path = cards_path/card_file
+        if card_file.suffix() != '.json' or not isfile(full_path):
+            continue
+        
+        card = load_card_from_file(full_path)
+        deck[card.id] = card
+    return deck

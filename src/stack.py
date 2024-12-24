@@ -17,4 +17,5 @@ class Stack:
         self.cards_list.insert(0, card)
 
     def pop(self):
-        return self.cards_list.pop()  # todo: pop from empty stack!!!
+        if len(self.cards_list) != 0:
+            return self.cards_list.pop()

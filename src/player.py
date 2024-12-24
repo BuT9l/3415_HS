@@ -17,33 +17,12 @@ class Player:
         field: Field | None = None,
         hand: Hand | None = None,
         stack: Stack | None = None,
-        input_interface: Type[IPlayerInput] = cli.CLI,
+        input_interface: Type[IPlayerInput] = cli.CLI
     ):
         self.field = field if field is not None else Field()
         self.hand = hand if hand is not None else Hand()
         self.stack = stack if stack is not None else Stack()
         self.input_interface = input_interface
-
-    def get_hand(self, index):
-        return self.hand
-
-    def push_to_stack(self, card):
-        self.stack.push(card)
-
-    def remove_from_field(self, index):
-        self.field.remove_card(index)
-
-    def get_card_dmg(self, index):
-        return self.field.get_card(index).get_dmg()
-
-    def get_card_hp(self, index):
-        return self.field.get_card(index).get_hp()
-
-    def change_card_hp(self, index, d_hp):
-        self.field.cards_list[index].change_hp(d_hp)
-
-    def change_mana(self, index, d_mhp):
-        self.field.cards_list[index].change_mp(d_mhp)
 
     def change_card_dmg(self, index, d_dmg):
         self.field.cards_list[index].change_dmg(d_dmg)
@@ -55,7 +34,7 @@ class Player:
             self.remove_from_field(index)
 
     def can_be_attacked(self, i_to):
-        return bool(self.field.get_card(i_to))
+        return type(self.field[i_to]) is Unit
 
 
     def can_play_card(self, i_from, i_to):

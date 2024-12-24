@@ -15,17 +15,9 @@ class Field:
         cards_list = cards_list if cards_list != None else [None] * len(FieldNames)
 
     def __eq__(self, other):
-
         for i in range(len(self.cards_list)):
             if self.cards_list[i] != other.cards_list[i]:
                 return False
         return True
 
-    def get_card(self, index):
-        return self.cards_list[index]
 
-    def place_card(self, card, index):
-        self.cards_list[index] = card
-
-    def remove_card(self, index):
-        self.cards_list[index] = None

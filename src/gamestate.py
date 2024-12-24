@@ -1,23 +1,31 @@
-from src.player import *
-from src.resource import RESOURCE as res
-from enum import Enum
-from src.field import Field as field
+from copy import deepcopy
+
+from src.player import Player
+from src.resource import RESOURCE
+from src.field import Field
 
 
 class GameState:
-    def __init__(self, p1=None, p2=None):
+    def __init__(self, p1: Player | None = None, p2: Player | None = None):
         self.attacker = p1 if p1 is not None else Player()
         self.defender = p2 if p2 is not None else Player()
 
-    def desk_created(self):
-        self.defender.change_mana(field.PLAYER, res['mana_add_per_turn'])  # Возможно нужно что-то добавить
-
     def attack(self, i_from, i_to):
-        if self.defender.can_be_attacked(i_to):
-            self.defender.change_card_hp(-self.attacker.get_card_dmg(i_from))
-            self.defender  # Вроде надо проверку на ent_kill сделать
-            return True
-        return False  # По факту функция должна также возвращать состояние атаки(возможно переделать в gameserver)
+        """
+        card on attacker's side of the field attacks card on defender's side
+            i_from - index on the field of the attacker card
+            i_to - index on the field of the defending card
+        """
+        attacker_card = self.attacker.field[i_from]
+        defender_card = self.defender.field[i_to]
+        if type(attacker_card) is not Unit or type(defender_card) is not Unit:
+            return
+
+        attacker_card.attack(defender_card)
+        if defender_card.is_dead():
+            self.defender.field[i_to] = None
+            new_card = deepcopy(DECK[defender_card.id])
+            self.defender.stack.push(new_card)
 
     def play_card(self, i_from, i_to):
         if self.attacker.can_play_card(i_from, i_to):
@@ -27,5 +35,5 @@ class GameState:
         self.attacker, self.defender = self.defender, self.attacker
 
     def next_turn(self, is_skipped):
-        self.defender.change_mana(field.PLAYER, res['mana_add_per_turn'])
+        self.defender.change_mana(Field.PLAYER, RESOURCE['mana_add_per_turn'])
         self.swap_players()
