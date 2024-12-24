@@ -2,13 +2,6 @@ import pytest
 from src.field import Field
 from src.hand import Hand
 from src.iterable import IterableStaticSize
-from src.cards import *
-
-DECK = load_cards(Path("cards/"))
-
-
-def test_prereq():
-    assert DECK is not None
 
 
 def test_init():

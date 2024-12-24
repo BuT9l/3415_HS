@@ -6,36 +6,6 @@ from src.stack import Stack
 from src.cards import *
 
 
-f = Field(
-    [
-        Unit("nikolaev", "Николаев", "PHYS", 11, 1, 14, []),
-        None,
-        Unit("ustukov", "Устюков", "EVM", 11, 2, 14, []),
-        Unit("nikolaev", "Николаев", "PHYS", 11, 3, 14, []),
-        PlayerUnit(99, 99, 1),
-        None,
-    ]
-)
-
-h = Hand(
-    [
-        Unit("nikolaev", "Николаев", "PHYS", 11, 1, 14, []),
-        Unit("nikolaev", "Николаев", "PHYS", 11, 2, 14, []),
-        Item("ram", "Плашка оперативы", "EVM", 15, 2, 2),
-        Location("toilet", "Центральный толкан", "MATH", 20, 5, 13),
-    ]
-)
-
-s = Stack(
-    [
-        Unit("nikolaev", "Николаев", "PHYS", 11, 1, 14, []),
-        Unit("nikolaev", "Николаев", "PHYS", 11, 2, 14, []),
-        Unit("nikolaev", "Николаев", "PHYS", 11, 3, 14, []),
-        Location("toilet", "Центральный толкан", "MATH", 20, 5, 13),
-    ]
-)
-
-
 def test_init():
     p = Player(f, h, s)
     assert p.field == f

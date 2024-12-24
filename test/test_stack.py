@@ -1,37 +1,27 @@
 import pytest
 from src.stack import Stack
-from src.cards import *
-
-
-cards = [
-    Unit("nikolaev", "Николаев", "PHYS", 11, 1, 14, []),
-    Unit("nikolaev", "Николаев", "PHYS", 11, 2, 14, []),
-    Unit("nikolaev", "Николаев", "PHYS", 11, 3, 14, []),
-    Location("toilet", "Центральный толкан", "MATH", 20, 5, 13),
-]
 
 
 def test_init():
-    s = Stack(cards)
-    assert s.cards_list == cards
-
-
-def test_get_top_card():
-    s = Stack(cards)
-    assert s.get_top_card() == cards[-1]
+    s = Stack([1, 2, 3, 4, 5, 6])
+    assert s.cards_list[0] == 1
+    assert s.cards_list[4] == 5
 
 
 def test_push():
-    s = Stack(cards)
-    s.push(cards[0])
-    assert s.cards_list[0] == cards[0]
+    s = Stack([5, 4, 3, 2, 1])
+    s.push(6)
+    s.push(7)
+    assert s.cards_list[0] == 7
+    assert s.cards_list[1] == 6
+    assert s.cards_list[2] == 5
 
 
 def test_pop():
-    s = Stack(cards)
-    s2 = Stack(cards.copy())
-
-    popped_element = s.pop()
-
-    assert popped_element == s2.get_top_card()
-    assert popped_element != s.get_top_card()
+    s = Stack([7, 6, 5, 4, 3, 2, 1])
+    s.push(s.pop())
+    s.push(s.pop())
+    assert s.cards_list[0] == 2
+    assert s.cards_list[1] == 1
+    assert s.cards_list[2] == 7
+    assert s.cards_list[3] == 6
