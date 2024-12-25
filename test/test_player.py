@@ -14,6 +14,8 @@ from src.cards import (
     load_cards,
 )
 
+DECK = load_cards(Path("cards/"))
+
 
 def test_init():
     p = Player(f, h, s)

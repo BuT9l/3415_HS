@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Type
 
-from src.cards import *
+from src.cards import Item, Unit, Location, Event
 from src.field import Field, FieldNames
 from src.hand import Hand
 from src.stack import Stack

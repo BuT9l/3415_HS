@@ -43,3 +43,7 @@ class GameState:
     def turn_end(self):
         self.defender.change_mana(FieldNames.PLAYER, RESOURCE["mana_add_per_turn"])
         self.swap_players()
+
+    def create_gameinfo(self) -> dict:
+        # see player_interface -> inform_gameinfo
+        pass
