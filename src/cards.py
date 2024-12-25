@@ -29,6 +29,14 @@ class Card:
             mn=card_dict["mn"],
         )
 
+    def save(self):
+        d = dict()
+        d["id"] = self.id
+        d["name"] = self.name
+        d["fract"] = self.fract
+        d["mn"] = self.mn
+        return d
+
 
 class Item(Card):
 
@@ -55,9 +63,14 @@ class Item(Card):
             hp_boost=card_dict["hp_boost"],
         )
 
+    def save(self):
+        d = super().save()
+        d["dmg_boost"] = self.dmg_boost
+        d["hp_boost"] = self.hp_boost
+        return d
+
 
 class Unit(Card):
-
     def __init__(self, id, name, fract, mn, dmg, hp, items):
         Card.__init__(self, id=id, name=name, fract=fract, mn=mn)
         self.dmg = dmg
@@ -77,6 +90,13 @@ class Unit(Card):
                 "items"
             ),  # get() will return None if items does not exist, and they does not in plain cards from repo
         )
+
+    def save(self):
+        d = super().save()
+        d["dmg"] = self.dmg
+        d["hp"] = self.hp
+        d["items"] = self.items
+        return d
 
     def recieve_item(self, item: Item):
         self.items.append(item)
@@ -114,6 +134,12 @@ class Location(Card):
             hp_boost=card_dict["hp_boost"],
         )
 
+    def save(self):
+        d = super().save()
+        d["dmg_boost"] = self.dmg_boost
+        d["hp_boost"] = self.hp_boost
+        return d
+
 
 class Event(Card):
     def __init__(self, id, name, fract, mn):
@@ -127,6 +153,10 @@ class Event(Card):
             fract=card_dict["fract"],
             mn=card_dict["mn"],
         )
+
+    def save(self):
+        d = super().save()
+        return d
 
 
 class PlayerUnit(Unit):
@@ -146,6 +176,13 @@ class PlayerUnit(Unit):
             hp=card_dict["hp"],
             items=card_dict["items"],
         )
+
+    def save(self):
+        d = super().save()
+        d["dmg"] = self.dmg
+        d["hp"] = self.hp
+        d["items"] = self.items
+        return d
 
 
 def load_card_from_file(file: Path):
