@@ -21,8 +21,13 @@ class Card:
         )
 
     @classmethod
-    def load(cls, file):
-        return cls(id=file["id"], name=file["name"], fract=file["fract"], mn=file["mn"])
+    def load(cls, card_dict):
+        return cls(
+            id=card_dict["id"],
+            name=card_dict["name"],
+            fract=card_dict["fract"],
+            mn=card_dict["mn"],
+        )
 
 
 class Item(Card):
@@ -40,14 +45,14 @@ class Item(Card):
         )
 
     @classmethod
-    def load(cls, file):
+    def load(cls, card_dict):
         return cls(
-            id=file["id"],
-            name=file["name"],
-            fract=file["fract"],
-            mn=file["mn"],
-            dmg_boost=file["dmg_boost"],
-            hp_boost=file["hp_boost"],
+            id=card_dict["id"],
+            name=card_dict["name"],
+            fract=card_dict["fract"],
+            mn=card_dict["mn"],
+            dmg_boost=card_dict["dmg_boost"],
+            hp_boost=card_dict["hp_boost"],
         )
 
 
@@ -60,21 +65,18 @@ class Unit(Card):
         self.items = items if items is not None else list()
 
     @classmethod
-    def load(cls, file):
+    def load(cls, card_dict):
         return cls(
-            id=file["id"],
-            name=file["name"],
-            fract=file["fract"],
-            mn=file["mn"],
-            dmg=file["dmg"],
-            hp=file["hp"],
-            items=file.get(
+            id=card_dict["id"],
+            name=card_dict["name"],
+            fract=card_dict["fract"],
+            mn=card_dict["mn"],
+            dmg=card_dict["dmg"],
+            hp=card_dict["hp"],
+            items=card_dict.get(
                 "items"
             ),  # get() will return None if items does not exist, and they does not in plain cards from repo
         )
-
-    def can_recieve_item(self, item):
-        return item.fract == self.fract
 
     def recieve_item(self, item: Item):
         self.items.append(item)
@@ -102,14 +104,14 @@ class Location(Card):
         )
 
     @classmethod
-    def load(cls, file):
+    def load(cls, card_dict):
         return cls(
-            id=file["id"],
-            name=file["name"],
-            fract=file["fract"],
-            mn=file["mn"],
-            dmg_boost=file["dmg_boost"],
-            hp_boost=file["hp_boost"],
+            id=card_dict["id"],
+            name=card_dict["name"],
+            fract=card_dict["fract"],
+            mn=card_dict["mn"],
+            dmg_boost=card_dict["dmg_boost"],
+            hp_boost=card_dict["hp_boost"],
         )
 
 
@@ -118,8 +120,13 @@ class Event(Card):
         Card.__init__(self, id=id, name=name, fract=fract, mn=mn)
 
     @classmethod
-    def load(cls, file):
-        return cls(id=file["id"], name=file["name"], fract=file["fract"], mn=file["mn"])
+    def load(cls, card_dict):
+        return cls(
+            id=card_dict["id"],
+            name=card_dict["name"],
+            fract=card_dict["fract"],
+            mn=card_dict["mn"],
+        )
 
 
 class PlayerUnit(Unit):
@@ -129,15 +136,15 @@ class PlayerUnit(Unit):
         )
 
     @classmethod
-    def load(cls, file):
+    def load(cls, card_dict):
         return cls(
-            id=file["id"],
-            name=file["name"],
-            fract=file["fract"],
-            mn=file["mn"],
-            dmg=file["dmg"],
-            hp=file["hp"],
-            items=file["items"],
+            id=card_dict["id"],
+            name=card_dict["name"],
+            fract=card_dict["fract"],
+            mn=card_dict["mn"],
+            dmg=card_dict["dmg"],
+            hp=card_dict["hp"],
+            items=card_dict["items"],
         )
 
 
