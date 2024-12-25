@@ -46,4 +46,5 @@ class GameState:
 
     def create_gameinfo(self) -> dict:
         # see player_interface -> inform_gameinfo
-        
+        gameinfo = dict()
+        return gameinfo

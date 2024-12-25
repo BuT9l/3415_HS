@@ -1,19 +1,8 @@
 from src.gamestate import GameState
 from src.hand import Hand
 from src.stack import Stack
-import enum
+from src.gamephases import GamePhase
 import random
-
-
-class GamePhase(enum.StrEnum):
-    CREATE_DECK = "Create deck"
-    CURRENT_TURN_MAIN = "Current turn"
-    CURRENT_TURN_GAMEINFO = "Get info on current turn"
-    CURRENT_TURN_PLAY_CARD = "Play card on current turn"
-    CURRENT_TURN_ATTACK = "Attack on current turn"
-    CURRENT_TURN_END = "End current turn"
-    SWAP_PLAYERS = "Swap players"
-    GAME_END = "Game end"
 
 
 class GameServer:
@@ -27,14 +16,14 @@ class GameServer:
 
     def run_one_step(self):
         phases = {
-            GamePhase.CREATE_DECK: create_deck_phase,
-            GamePhase.CURRENT_TURN_MAIN: current_turn_main_phase,
-            GamePhase.CURRENT_TURN_GAMEINFO: current_turn_gameinfo,
-            GamePhase.CURRENT_TURN_PLAY_CARD: current_turn_play_card_phase,
-            GamePhase.CURRENT_TURN_ATTACK: current_turn_attack_phase,
-            GamePhase.CURRENT_TURN_END: current_turn_end,
-            GamePhase.SWAP_PLAYERS: swap_players_phase,
-            GamePhase.GAME_END: end_game,
+            GamePhase.CREATE_DECK: self.create_deck_phase,
+            GamePhase.CURRENT_TURN_MAIN: self.current_turn_main_phase,
+            GamePhase.CURRENT_TURN_GAMEINFO: self.current_turn_gameinfo,
+            GamePhase.CURRENT_TURN_PLAY_CARD: self.current_turn_play_card_phase,
+            GamePhase.CURRENT_TURN_ATTACK: self.current_turn_attack_phase,
+            GamePhase.CURRENT_TURN_END: self.current_turn_end,
+            GamePhase.SWAP_PLAYERS: self.swap_players_phase,
+            GamePhase.GAME_END: self.end_game,
         }
         phases[self.current_phase]()
 
@@ -49,6 +38,7 @@ class GameServer:
         )
 
     def current_turn_gameinfo(self):
+        self.current_phase = GamePhase.CURRENT_TURN_MAIN
         pass
 
     def current_turn_end(self):

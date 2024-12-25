@@ -1,25 +1,23 @@
-from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
-
-if TYPE_CHECKING:
-    from src.field import FieldNames
-    from src.gameserver import GamePhase
+from src.gamephases import GamePhase
+from src.field import FieldNames
 
 
 class IPlayerInput(ABC):
     # CREATE_DECK
     @staticmethod
     @abstractmethod
-    def choose_cards(self, all_cards: dict):
+    def choose_cards():
         """
         Просит игрока выбрать 8 карт из всех доступных карт
+        Ожидается что присутствует глобальная переменная DECK со всеми используемыми картами
         """
         pass
 
     # CURRENT_TURN_MAIN
     @staticmethod
     @abstractmethod
-    def choose_current_turn(self) -> "GamePhase":
+    def choose_current_turn() -> "GamePhase":
         """
         Выбрать, какое действие вы хотите сделать за ход. (Какая фаза будет следующей)
         Можно:
@@ -31,7 +29,7 @@ class IPlayerInput(ABC):
         pass
 
     @staticmethod
-    def inform_gameinfo(self, info):
+    def inform_gameinfo(gameinfo):
         """
         Получает информацию о состоянии игры в виде словаря:
             Состояние своего поля (my_field) и поля врага(enemy_field) - Списки из 6 элементов:
@@ -45,7 +43,7 @@ class IPlayerInput(ABC):
     # CURRENT_TURN_PLAY_CARD
     @staticmethod
     @abstractmethod
-    def choose_card_to_play(self, player) -> tuple[int, "FieldNames"]:
+    def choose_card_to_play(player) -> tuple[int, "FieldNames"]:
         """
         Выбрать, какую карту вы хотите сыграть и проверить возможность такой игры
         Возвращает 2 значения:
@@ -57,7 +55,7 @@ class IPlayerInput(ABC):
     # CURRENT_TURN_ATTACK
     @staticmethod
     @abstractmethod
-    def choose_unit_to_attack(self, server) -> tuple["FieldNames", "FieldNames"]:
+    def choose_unit_to_attack(server) -> tuple["FieldNames", "FieldNames"]:
         """
         Атакуем юнитом вражеского юнита и проверяем возможность атаки
         Возвращает 2 значения:
@@ -68,7 +66,7 @@ class IPlayerInput(ABC):
 
     @staticmethod
     @abstractmethod
-    def turn_end(self):
+    def turn_end():
         """
         Закончить свой ход
         """
