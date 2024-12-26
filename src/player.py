@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Type
 
 from src.cards import Item, Unit, Location, Event
 from src.field import Field, FieldNames
@@ -7,7 +6,7 @@ from src.hand import Hand
 from src.stack import Stack
 
 from src.player_interface import IPlayerInput
-from src.players import cli
+from src.players.cli import CLI
 
 
 class Player:
@@ -16,12 +15,12 @@ class Player:
         field: Field | None = None,
         hand: Hand | None = None,
         stack: Stack | None = None,
-        input_interface: Type[IPlayerInput] = cli.CLI,
+        input_interface: IPlayerInput | None = None,
     ):
         self.field = field if field is not None else Field()
         self.hand = hand if hand is not None else Hand()
         self.stack = stack if stack is not None else Stack()
-        self.input_interface = input_interface
+        self.input_interface = input_interface if input_interface is not None else CLI()
 
     def can_play_card(self, i_from, i_to):
         card_from = self.hand.get(i_from)

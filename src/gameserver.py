@@ -38,6 +38,8 @@ class GameServer:
         )
 
     def current_turn_gameinfo(self):
+        gameinfo = self.game_state.create_gameinfo()
+        self.game_state.attacker.input_interface.inform_gameinfo(gameinfo)
         self.current_phase = GamePhase.CURRENT_TURN_MAIN
         pass
 

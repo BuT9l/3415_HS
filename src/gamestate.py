@@ -47,4 +47,8 @@ class GameState:
     def create_gameinfo(self) -> dict:
         # see player_interface -> inform_gameinfo
         gameinfo = dict()
+        gameinfo["my_field"] = deepcopy(self.attacker.field.cards_list)
+        gameinfo["enemy_field"] = deepcopy(self.defender.field.cards_list)
+        gameinfo["my_hand"] = deepcopy(self.attacker.hand.cards_list)
+        # gameinfo["events"] = ???
         return gameinfo
