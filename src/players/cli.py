@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from src.player_interface import IPlayerInput
 from src.gamephases import GamePhase
 from src.field import Field, FieldNames
@@ -8,21 +10,39 @@ class CLI(IPlayerInput):
     def __init__(self):
         pass
 
-    def choose_cards(self):
-        print("Choose cards not implemented")
-        pass
+    def choose_cards(self, DECK: dict) -> list[8]:
+        while True:
+            print(end="\033[H\033[2J")  # Очистить экран
+            print("Доступные карты для выбора:")
+            i = 1
+            callback = dict()
+            for key in DECK:
+                print(f"{i}. {DECK[key].name}")
+                callback[i] = key
+                i += 1
+            choice = input(
+                "Выберите карты, с которыми вы будете играть (номера карт через пробел):"
+            )
+            chosen_cards = list()
+            for key in callback:
+                if key in choice:
+                    chosen_cards.append(deepcopy(DECK[callback[key]]))
+            if len(chosen_cards != 8):
+                print("Вы должны выбрать 8 карт")
+                continue
+            return chosen_cards
 
     def choose_current_turn(self) -> GamePhase:
         while True:
             print(
                 """
-    Выберите действие:
+    Выберите действие: \033[s
 1. Посмотреть карты на руке
 2. Сыграть карту с руки
 3. Атаковать юнита
 4. Закончить ход""",
-                end="\033[4A\033[7C",
-            )  # Переместить курсор после двоеточия
+                end="\033[u",  # Переместить курсор после двоеточия
+            )
             choice = input()
             print(end="\033[J")  # Стереть список действий
             match choice:

@@ -1,6 +1,8 @@
 from src import gameserver
-from src.cards import load_card_from_file, load_cards
 from pathlib import Path
+
+from src.cards import load_card_from_file, load_cards
+from src.resource import DECK
 
 
 def __main__():

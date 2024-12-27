@@ -6,10 +6,9 @@ from src.field import Field, FieldNames
 class IPlayerInput(ABC):
     # CREATE_DECK
     @abstractmethod
-    def choose_cards(self):
+    def choose_cards(self, DECK: dict) -> list[8]:
         """
         Просит игрока выбрать 8 карт из всех доступных карт
-        Ожидается что присутствует глобальная переменная DECK со всеми используемыми картами
         """
         pass
 

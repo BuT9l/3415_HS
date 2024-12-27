@@ -1,13 +1,20 @@
+import random
+
 from src.gamestate import GameState
 from src.hand import Hand
 from src.stack import Stack
 from src.gamephases import GamePhase
-import random
+from src.resource import RESOURCE
 
 
 class GameServer:
-    def __init__(self, state: GameState | None = None, phase: GamePhase | None = None):
-        self.game_state = state if state is not None else GameState()
+    def __init__(
+        self,
+        state: GameState | None = None,
+        phase: GamePhase | None = None,
+        DECK: dict | None = None,
+    ):
+        self.game_state = state if state is not None else GameState(DECK=DECK)
         self.current_phase = phase if phase is not None else GamePhase.CREATE_DECK
 
     def run(self):
@@ -28,8 +35,14 @@ class GameServer:
         phases[self.current_phase]()
 
     def create_deck_phase(self):
-        self.game_state.attacker.input_interface.choose_cards()
-        self.game_state.defender.input_interface.choose_cards()
+        DECK = self.game_state.DECK
+        for player in [self.game_state.attacker, self.game_state.defender]:
+            cards = player.input_interface.choose_cards()
+            random.shuffle(cards)
+            for card in cards:
+                player.stack.push(card)
+            for i in range(RESOURCE["hand_size"]):
+                player.hand.push(player.stack.pop(), i)
         self.current_phase = GamePhase.CURRENT_TURN_MAIN
 
     def current_turn_main_phase(self):
@@ -41,7 +54,6 @@ class GameServer:
         gameinfo = self.game_state.create_gameinfo()
         self.game_state.attacker.input_interface.inform_gameinfo(gameinfo)
         self.current_phase = GamePhase.CURRENT_TURN_MAIN
-        pass
 
     def current_turn_end(self):
         pass
