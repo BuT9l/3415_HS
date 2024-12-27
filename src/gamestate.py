@@ -27,7 +27,7 @@ class GameState:
         if (
             isinstance(attacker_card, Unit)
             and isinstance(defender_card, Unit)
-            and i_from not in self.attacked_list
+            and attacker_card.already_attacked == False
         ):
             return True
         return False
@@ -42,7 +42,7 @@ class GameState:
         defender_card = self.defender.field.get(i_to)
 
         attacker_card.attack(defender_card)
-        self.attacked_list.append(i_from)
+        attacker_card.already_attacked = True
         if not defender_card.is_dead():
             return
 
@@ -59,6 +59,10 @@ class GameState:
 
     def turn_end(self):
         player_card = self.defender.field.get(FieldNames.PLAYER)
+        for unit in self.attacker.field.cards_list:
+            if isinstance(unit, Unit):
+                unit.already_attacked = False
+
         self.attacked_list = list()
         player_card.mn += RESOURCE["mana_add_per_turn"]
 

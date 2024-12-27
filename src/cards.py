@@ -76,6 +76,7 @@ class Unit(Card):
         self.dmg = dmg
         self.hp = hp
         self.items = items if items is not None else list()
+        self.already_attacked = False
 
     @classmethod
     def load(cls, card_dict):
