@@ -57,6 +57,6 @@ class Player:
         if isinstance(card_to, Unit):
             card_to.recieve_item(card_from)
         else:
-            self.field.place_card(card_from, i_to)
+            self.field.push(card_from, i_to)
 
         card_player.mn -= card_from.mn

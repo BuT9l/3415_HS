@@ -47,6 +47,12 @@ class IPlayerInput(ABC):
         """
         pass
 
+    def inform_play_card_success(self):
+        pass
+
+    def inform_play_card_failure(self):
+        pass
+
     # CURRENT_TURN_ATTACK
     @abstractmethod
     def choose_unit_to_attack(self, field: Field) -> tuple[FieldNames, FieldNames]:
@@ -58,9 +64,8 @@ class IPlayerInput(ABC):
         """
         pass
 
-    @abstractmethod
-    def turn_end(self):
-        """
-        Закончить свой ход
-        """
+    def inform_attack_success(self):
+        pass
+
+    def inform_attack_failure(self):
         pass

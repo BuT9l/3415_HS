@@ -3,6 +3,7 @@ import random
 from src.gamestate import GameState
 from src.hand import Hand
 from src.stack import Stack
+from src.field import FieldNames
 from src.gamephases import GamePhase
 from src.resource import RESOURCE
 
@@ -37,7 +38,7 @@ class GameServer:
     def create_deck_phase(self):
         DECK = self.game_state.DECK
         for player in [self.game_state.attacker, self.game_state.defender]:
-            cards = player.input_interface.choose_cards()
+            cards = player.input_interface.choose_cards(DECK)
             random.shuffle(cards)
             for card in cards:
                 player.stack.push(card)
@@ -55,17 +56,39 @@ class GameServer:
         self.game_state.attacker.input_interface.inform_gameinfo(gameinfo)
         self.current_phase = GamePhase.CURRENT_TURN_MAIN
 
-    def current_turn_end(self):
-        pass
-
     def current_turn_play_card_phase(self):
-        self.game_state.attacker.input_interface.try_play_card()
+        ifrom, ito = self.game_state.attacker.input_interface.choose_card_to_play(
+            self.game_state.attacker
+        )
+        player = self.game_state.attacker
+        if player.can_play_card(ifrom, ito):
+            player.input_interface.inform_play_card_success()
+            self.game_state.attacker.play_card(ifrom, ito)
+        else:
+            player.input_interface.inform_play_card_failure()
+        self.current_phase = GamePhase.CURRENT_TURN_MAIN
 
     def current_turn_attack_phase(self):
-        self.game_state.attacker.input_interface.unit_attack()
+        ifrom, ito = self.game_state.attacker.input_interface.choose_unit_to_attack()
+        if self.game_state.can_attack(ifrom, ito):
+            self.game_state.attacker.input_interface.inform_attack_success()
+            self.game_state.attack(ifrom, ito)
+        else:
+            self.game_state.attacker.input_interface.inform_attack_failure()
+
+        self.current_phase = GamePhase.CURRENT_TURN_MAIN
+
+    def current_turn_end(self):
+        if self.game_state.defender.field.get(FieldNames.PLAYER).is_dead():
+            self.current_phase = GamePhase.GAME_END
+        elif self.game_state.attacker.field.get(FieldNames.PLAYER).is_dead():
+            self.current_phase = GamePhase.GAME_END
+        else:
+            self.current_phase = GamePhase.SWAP_PLAYERS
+        self.game_state.turn_end()
 
     def swap_players_phase(self):
-        self.game_state.attacker.input_interface.turn_end()
+        self.game_state.swap_players()
         self.current_phase = GamePhase.CURRENT_TURN_MAIN
 
     def end_game():

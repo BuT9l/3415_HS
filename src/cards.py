@@ -86,9 +86,8 @@ class Unit(Card):
             mn=card_dict["mn"],
             dmg=card_dict["dmg"],
             hp=card_dict["hp"],
-            items=card_dict.get(
-                "items"
-            ),  # get() will return None if items does not exist, and they does not in plain cards from repo
+            items=card_dict.get("items"),
+            # get() will return None if items does not exist, and they does not in plain cards from repo
         )
 
     def save(self):
@@ -174,7 +173,7 @@ class PlayerUnit(Unit):
             mn=card_dict["mn"],
             dmg=card_dict["dmg"],
             hp=card_dict["hp"],
-            items=card_dict["items"],
+            items=card_dict.get("items"),
         )
 
     def save(self):
@@ -193,6 +192,7 @@ def load_card_from_file(file: Path):
         "item": Item.load,
         "location": Location.load,
         "event": Event.load,
+        "player": PlayerUnit.load,
     }
     card = lookup_table[card_dict["class"]](card_dict)
     return card

@@ -4,6 +4,7 @@ from src.player_interface import IPlayerInput
 from src.gamephases import GamePhase
 from src.field import Field, FieldNames
 from src.cards import Card, Unit, PlayerUnit, Item, Location, Event
+from src.resource import RESOURCE
 
 
 class CLI(IPlayerInput):
@@ -12,13 +13,12 @@ class CLI(IPlayerInput):
 
     def choose_cards(self, DECK: dict) -> list[8]:
         while True:
-            print(end="\033[H\033[2J")  # Очистить экран
             print("Доступные карты для выбора:")
             i = 1
             callback = dict()
             for key in DECK:
                 print(f"{i}. {DECK[key].name}")
-                callback[i] = key
+                callback[str(i)] = key
                 i += 1
             choice = input(
                 "Выберите карты, с которыми вы будете играть (номера карт через пробел):"
@@ -27,24 +27,22 @@ class CLI(IPlayerInput):
             for key in callback:
                 if key in choice:
                     chosen_cards.append(deepcopy(DECK[callback[key]]))
-            if len(chosen_cards != 8):
+            if len(chosen_cards) != 8:
                 print("Вы должны выбрать 8 карт")
                 continue
             return chosen_cards
 
     def choose_current_turn(self) -> GamePhase:
-        while True:
-            print(
-                """
-    Выберите действие: \033[s
-1. Посмотреть карты на руке
+        print(
+            """
+1. Посмотреть всю информацию об игре
 2. Сыграть карту с руки
 3. Атаковать юнита
-4. Закончить ход""",
-                end="\033[u",  # Переместить курсор после двоеточия
-            )
+4. Закончить ход"""
+        )
+        while True:
+            print("Выберите действие:", end=" ")
             choice = input()
-            print(end="\033[J")  # Стереть список действий
             match choice:
                 case "1":
                     return GamePhase.CURRENT_TURN_GAMEINFO
@@ -73,6 +71,8 @@ class CLI(IPlayerInput):
         s += "\t" * indent
         s += f"[Локация] [{card.fract}] {card.name}"
         s += "\n" + "\t" * indent
+        s += f"\tСтоимость: {card.mn}"
+        s += "\n" + "\t" * indent
         s += f"\tУрон: +{card.dmg_boost}"
         s += "\n" + "\t" * indent
         s += f"\tЗдоровье: +{card.hp_boost}"
@@ -82,6 +82,8 @@ class CLI(IPlayerInput):
         s = str()
         s += "\t" * indent
         s += f"[Предмет] [{card.fract}] {card.name}"
+        s += "\n" + "\t" * indent
+        s += f"\tСтоимость: {card.mn}"
         s += "\n" + "\t" * indent
         s += f"\tУрон: +{card.dmg_boost}"
         s += "\n" + "\t" * indent
@@ -95,7 +97,7 @@ class CLI(IPlayerInput):
         s += "\n" + "\t" * indent
         s += f"\tСтоимость: {card.mn}"
         s += "\n" + "\t" * indent
-        s += f"\tЗдоровье: {card.hp} / {DECK[card.id].hp}"
+        s += f"\tЗдоровье: {card.hp}"
         s += "\n" + "\t" * indent
         s += f"\tУрон: {card.dmg}"
         if len(card.items) != 0:
@@ -106,12 +108,19 @@ class CLI(IPlayerInput):
                 s += repr_item(shmotka, indent=2)
         return s
 
-    def repr_event(self, card: Event):
+    def repr_event(self, card: Event, indent=1):
         s = str()
+        s += "\t" * indent
+        s += f"[Ивент] [{card.fract}] {card.name}"
+        s += "\n" + "\t" * indent
+        s += f"\tСтоимость: {card.mn}"
         return s
 
     def inform_gameinfo_field_printer(self, field: list):
+        i = 1
         for item in field:
+            print(f"{i}:", end="")
+            i += 1
             if item is None:
                 print("\t[Пустой слот]")
             elif isinstance(item, PlayerUnit):
@@ -122,7 +131,10 @@ class CLI(IPlayerInput):
                 print(self.repr_unit(item))
 
     def inform_gameinfo_hand_printer(self, hand: list):
+        i = 1
         for item in hand:
+            print(f"{i}:", end="")
+            i += 1
             if item is None:
                 print("\t[Пустой слот]")
             elif isinstance(item, Unit):
@@ -143,10 +155,77 @@ class CLI(IPlayerInput):
         self.inform_gameinfo_hand_printer(gameinfo["my_hand"])
 
     def choose_card_to_play(self, player) -> tuple[int, FieldNames]:
-        pass
+        while True:
+            print("Выберите номер карты, которую вы хотите сыграть:", end=" ")
+            try:
+                ifrom = int(input())
+                if ifrom < 1 or ifrom > RESOURCE["hand_size"]:
+                    print("Такого индекса нету")
+                    continue
+            except ValueError:
+                print("Напечатайте число")
+                continue
+            break
 
-    def choose_unit_to_attack(self, field: Field) -> tuple[FieldNames, FieldNames]:
-        pass
+        while True:
+            print("Выберите номер поля, куда вы хотите сыграть карту:", end=" ")
+            try:
+                ito = int(input())
+                if ito < 1 or ito > len(FieldNames):
+                    print("Такого индекса нету")
+                    continue
+            except ValueError:
+                print("Напечатайте число")
+                continue
+            break
+        return (ifrom - 1, ito - 1)
 
-    def turn_end(self):
-        pass
+    def inform_play_card_success(self):
+        print("Карта разыграна")
+
+    def inform_play_card_failure(self):
+        print("Вы не можете разыграть карту так")
+
+    def choose_unit_to_attack(self) -> tuple[FieldNames, FieldNames]:
+        while True:
+            print("Выберите номер юнита, которым вы хотите атаковать", end=" ")
+            try:
+                ifrom = int(input())
+                if ifrom < 1 or ifrom > len(FieldNames):
+                    print("Такого индекса нету")
+                    continue
+                if ifrom + 1 == FieldNames.PLAYER:
+                    print("Вы не можете атаковать игроком")
+                    continue
+                if ifrom + 1 == FieldNames.LOCATION:
+                    print("Это локация, она не обладает умением атаковать")
+                    continue
+            except ValueError:
+                print("Напечатайте число")
+                continue
+            break
+
+        while True:
+            print(
+                "Выберите номер вражеского юнита, которого вы хотите атаковать:",
+                end=" ",
+            )
+            try:
+                ito = int(input())
+                if ito < 1 or ito > len(FieldNames):
+                    print("Такого индекса нету")
+                    continue
+                if ifrom + 1 == FieldNames.LOCATION:
+                    print("Это локация, вы не можете её атаковать")
+                    continue
+            except ValueError:
+                print("Напечатайте число")
+                continue
+            break
+        return (ifrom - 1, ito - 1)
+
+    def inform_attack_success(self):
+        print("Юнит атакует!!")
+
+    def inform_attack_failure(self):
+        print("Вы не можете так атаковать")
